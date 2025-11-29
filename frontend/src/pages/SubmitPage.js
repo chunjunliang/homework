@@ -83,7 +83,7 @@ const SubmitPage = () => {
       submitFormData.append('description', formData.description);
       submitFormData.append('file', file);
 
-      const response = await assignmentAPI.submitAssignment(submitFormData);
+      await assignmentAPI.submitAssignment(submitFormData);
       
       setMessage({ 
         type: 'success', 

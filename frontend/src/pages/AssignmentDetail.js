@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { assignmentAPI } from '../services/api';
 import './AssignmentDetail.css';
 
 const AssignmentDetail = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [assignment, setAssignment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -14,18 +13,7 @@ const AssignmentDetail = () => {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  useEffect(() => {
-    fetchAssignment();
-  }, [id]);
-
-  useEffect(() => {
-    if (assignment) {
-      setGrade(assignment.grade || '');
-      setFeedback(assignment.feedback || '');
-    }
-  }, [assignment]);
-
-  const fetchAssignment = async () => {
+  const fetchAssignment = useCallback(async () => {
     try {
       setLoading(true);
       const response = await assignmentAPI.getAssignmentById(id);
@@ -37,7 +25,18 @@ const AssignmentDetail = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchAssignment();
+  }, [fetchAssignment]);
+
+  useEffect(() => {
+    if (assignment) {
+      setGrade(assignment.grade || '');
+      setFeedback(assignment.feedback || '');
+    }
+  }, [assignment]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
